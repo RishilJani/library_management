@@ -1,10 +1,8 @@
 package com.project.library_management.services;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.project.library_management.entities.User;
 import com.project.library_management.repo.UserRepo;
 
@@ -25,12 +23,13 @@ public class UserService {
 	}
 	
 	// To get user by id 	
-	public void insertUser(User us) {
+	public boolean insertUser(User us) {
 		try {			
-			repo.save(us);
+			this.repo.save(us);
+			return true;
 		} catch (Exception e) {
 			System.out.println("ERROR : " + e.getMessage());
-			
+			return false;
 		}
 	}
 

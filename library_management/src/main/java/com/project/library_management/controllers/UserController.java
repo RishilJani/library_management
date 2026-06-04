@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.library_management.entities.User;
 import com.project.library_management.services.UserService;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -24,6 +26,12 @@ public class UserController {
 		return this.userService.getAllUsers();
 	}
 	
+	@GetMapping("/users/{userId}")
+	public User getUserById(@PathVariable long userId) {
+		return this.userService.getUserById(userId);
+	}
+	
+
 	@PostMapping("/users")
 	public String insertUser(@RequestBody Map<String,String> mp) {
 		User us = User.fromMap(mp);
@@ -51,7 +59,7 @@ public class UserController {
 
 	// Edit the user
 	@PutMapping("/users/{id}")
-	public String putMethodName(@PathVariable long id, @RequestBody Map<String,String> mp) {
+	public String updateUser(@PathVariable long id, @RequestBody Map<String,String> mp) {
 		User us = User.fromMap(mp);
 		if(us == null){
 			return "ERROR";
