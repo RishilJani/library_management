@@ -1,4 +1,5 @@
 package com.project.library_management.controllers;
+
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import com.project.library_management.DTOs.insert_DTOs.UserRequestDTO;
 import com.project.library_management.entities.User;
 import com.project.library_management.services.UserService;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-
 
 @RestController
 public class UserController {
@@ -33,12 +32,9 @@ public class UserController {
 	
 
 	@PostMapping("/users")
-	public String insertUser(@RequestBody Map<String,String> mp) {
-		User us = User.fromMap(mp);
-		if(us == null){
-			return "Error";
-		}
+	public String insertUser(@RequestBody UserRequestDTO us) {
 		try {
+			// User us = User.fromMap(mp);
 			this.userService.insertUser(us);
 			return "User Added";
 		}catch (Exception e) {

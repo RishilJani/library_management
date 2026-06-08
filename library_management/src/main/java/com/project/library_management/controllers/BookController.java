@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
+import com.project.library_management.DTOs.insert_DTOs.BookRequestDTO;
 import com.project.library_management.entities.Book;
 import com.project.library_management.services.BookService;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,9 +31,8 @@ public class BookController {
     }
 
     @PostMapping("/books")
-    public String insertBook(@RequestBody Map<String,String> mp){
+    public String insertBook(@RequestBody BookRequestDTO book){
         try {
-            Book book = Book.fromMap(mp);
             this.bookService.insertBook(book);
             return "Added";
         } catch (Exception e) {

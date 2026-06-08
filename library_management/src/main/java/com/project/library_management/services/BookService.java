@@ -3,6 +3,7 @@ package com.project.library_management.services;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.project.library_management.DTOs.insert_DTOs.BookRequestDTO;
 import com.project.library_management.entities.Book;
 import com.project.library_management.repo.BookRepo;
 
@@ -23,8 +24,9 @@ public class BookService {
     }
 
     // to create book record
-    public boolean insertBook(Book book){
+    public boolean insertBook(BookRequestDTO bookDTO){
         try {
+            Book book = new Book(bookDTO.getIsbn(),bookDTO.getTitle(), bookDTO.getDescription(), bookDTO.getPublication());
             this.bookRepo.save(book);
             return true;
         } catch (Exception e) {

@@ -3,6 +3,7 @@ package com.project.library_management.services;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.project.library_management.DTOs.insert_DTOs.UserRequestDTO;
 import com.project.library_management.entities.User;
 import com.project.library_management.repo.UserRepo;
 
@@ -23,9 +24,10 @@ public class UserService {
 	}
 	
 	// To get user by id 	
-	public boolean insertUser(User us) {
+	public boolean insertUser(UserRequestDTO us) {
 		try {			
-			this.repo.save(us);
+			User user = new User(us.getUserName(), us.getPassword(), us.getRole(), us.getEmail());
+			this.repo.save(user);
 			return true;
 		} catch (Exception e) {
 			System.out.println("ERROR : " + e.getMessage());

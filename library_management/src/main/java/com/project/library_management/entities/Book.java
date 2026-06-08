@@ -1,6 +1,5 @@
 package com.project.library_management.entities;
 
-import java.util.List;
 import java.util.Map;
 import jakarta.persistence.*;
 
@@ -17,8 +16,6 @@ public class Book {
     private String description;
     private String publication;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<BookCopy> bookCopies;
 
     public Book() {
         super();
