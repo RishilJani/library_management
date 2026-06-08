@@ -1,10 +1,9 @@
 package com.project.library_management.services;
 
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.project.library_management.DTOs.insert_DTOs.BookCopyRequestDTO;
+import com.project.library_management.DTOs.response_DTOs.ResponseDTO;
 import com.project.library_management.entities.Book;
 import com.project.library_management.entities.BookCopy;
 import com.project.library_management.repo.BookCopyRepo;
@@ -18,23 +17,29 @@ public class BookCopyService {
     @Autowired
     BookRepo bookRepo;
 
-    public List<BookCopy> getAllBookCopies(){
-        return this.bookCopyRepo.findAll();
+    public ResponseDTO getAllBookCopies(){
+        return new ResponseDTO(false, "Book Copies",this.bookCopyRepo.findAll());
     }
-    public List<BookCopy> getBookCopiesByBookId(long bookId){
-        return this.bookCopyRepo.findByBookBookId(bookId);
+    
+    public ResponseDTO getBookCopiesByBookId(long bookId){
+        return new ResponseDTO(false,"Book Copies By book id",this.bookCopyRepo.findByBookBookId(bookId));
     }
     
     public BookCopy getBookCopyById(long bookCopyId){
         return this.bookCopyRepo.findById(bookCopyId).orElse(null);
     }
 
-    public String insertBookCopy(BookCopyRequestDTO bookCopyRequestDTO){
-        Book book = this.bookRepo.findById(bookCopyRequestDTO.getBookId()).orElse(null);
-        
-        if(book == null) return "Book not found !!";
+    public ResponseDTO insertBookCopy(BookCopyRequestDTO bookCopyRequestDTO){
+        try {
+            Book book = this.bookRepo.findById(bookCopyRequestDTO.getBookId()).orElse(null);
+            if(book == null) return ResponseDTO.notFoundResponse("Book Not found");
+            
+            BookCopy copy = this.bookCopyRepo.save(new BookCopy(book,bookCopyRequestDTO.getStatus(),bookCopyRequestDTO.getShelfLocation()));
+            return new ResponseDTO(false, "Book Copy Added", copy);
+        } catch (Exception e) {
+            System.out.println("Error at insert book copy = " + e.getMessage());
+            return ResponseDTO.errorResponse(e);
+        }
 
-        this.bookCopyRepo.save(new BookCopy(book,bookCopyRequestDTO.getStatus(),bookCopyRequestDTO.getShelfLocation()));
-        return "Copy Added";
     }
 }

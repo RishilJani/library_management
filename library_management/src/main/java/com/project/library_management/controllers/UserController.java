@@ -1,6 +1,5 @@
 package com.project.library_management.controllers;
 
-import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.project.library_management.DTOs.insert_DTOs.UserRequestDTO;
+import com.project.library_management.DTOs.response_DTOs.ResponseDTO;
 import com.project.library_management.entities.User;
 import com.project.library_management.services.UserService;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,50 +21,39 @@ public class UserController {
 	UserService userService;
 	
 	@GetMapping("/users")
-	public List<User> getAllUsers(){
+	public ResponseDTO getAllUsers(){
 		return this.userService.getAllUsers();
 	}
 	
 	@GetMapping("/users/{userId}")
-	public User getUserById(@PathVariable long userId) {
+	public ResponseDTO getUserById(@PathVariable long userId) {
 		return this.userService.getUserById(userId);
 	}
-	
 
 	@PostMapping("/users")
-	public String insertUser(@RequestBody UserRequestDTO us) {
+	public ResponseDTO insertUser(@RequestBody UserRequestDTO us) {
 		try {
-			// User us = User.fromMap(mp);
-			this.userService.insertUser(us);
-			return "User Added";
+			return this.userService.insertUser(us);
 		}catch (Exception e) {
 			System.out.println(e.getMessage());
-			return "ERROR";
+			return new ResponseDTO(true, "Some Error Occured" , e);
 		}
 	}
 
-	
 	@DeleteMapping("/users/{userId}")
-	public String deleteUser(@PathVariable long userId){
-		boolean b = this.userService.deleteUser(userId);
-		if(b)
-			return "DELETED";
-		else 
-			return "ERROR";
+	public ResponseDTO deleteUser(@PathVariable long userId){
+		return this.userService.deleteUser(userId);
 	}
 
 	// Edit the user
 	@PutMapping("/users/{id}")
-	public String updateUser(@PathVariable long id, @RequestBody Map<String,String> mp) {
-		User us = User.fromMap(mp);
-		if(us == null){
-			return "ERROR";
-		}
-		try {
-			this.userService.updateUser(us,id);
-		} catch (Exception e) {
-			return "ERROR";
-		}
-		return "User Updated";
+	public ResponseDTO updateUser(@PathVariable long id, @RequestBody Map<String,String> mp) {
+		return this.userService.updateUser(mp, id);
 	}
+
+	@PostMapping("/login")
+	public ResponseDTO postMethodName(@RequestBody Map<String,String> mp) {
+		return this.userService.loginUser(mp);
+	}
+	
 }

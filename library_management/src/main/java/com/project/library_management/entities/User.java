@@ -6,7 +6,7 @@ import com.project.library_management.utils.enums.Role;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users",uniqueConstraints = @UniqueConstraint(columnNames = {"email"}))
 public class User {
 
 	@Id
@@ -17,6 +17,7 @@ public class User {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private Role role;
+	
 	private String email;
 	private String password;
 	private Instant createdAt;
@@ -26,7 +27,6 @@ public class User {
 	}
 
 	public User(long userId, String userName, Role role, String email, Instant createdAt) {
-		super();
 		this.userId = userId;
 		this.userName = userName ;
 		this.role = role;
@@ -35,7 +35,6 @@ public class User {
 	}
 
 	public User(long userId, String userName, Role role, String email,String password, Instant createdAt) {
-		super();
 		this.userId = userId;
 		this.userName = userName;
 		this.role = role;
@@ -46,7 +45,6 @@ public class User {
 	
 	// When user is created
 	public User(String userName, String password, Role role, String email) {
-		super();
 		this.userName = userName ;
 		this.password = password ;
 		this.role = role ;

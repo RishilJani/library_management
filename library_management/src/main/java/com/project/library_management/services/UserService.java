@@ -1,55 +1,66 @@
 package com.project.library_management.services;
 
-import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.project.library_management.DTOs.insert_DTOs.UserRequestDTO;
+import com.project.library_management.DTOs.response_DTOs.ResponseDTO;
 import com.project.library_management.entities.User;
 import com.project.library_management.repo.UserRepo;
 
 @Service
 public class UserService {
 	 
-	@Autowired
+    @Autowired
 	UserRepo repo;
-	
+
 	// To get all users 
-	public List<User> getAllUsers(){
-		return repo.findAll();
+	public ResponseDTO getAllUsers(){
+		return new ResponseDTO(false, "Users data",repo.findAll());
 	}
 
 	// To get user by id 	
-	public User getUserById(long userId) {
-		return repo.findById(userId).orElse(null);
+	public ResponseDTO getUserById(long userId) {
+		User us = repo.findById(userId).orElse(null);
+		if(us != null)
+			return new ResponseDTO(false, "User Found" , us);
+		else
+			return ResponseDTO.notFoundResponse("User Not found");
+
 	}
 	
 	// To get user by id 	
-	public boolean insertUser(UserRequestDTO us) {
+	public ResponseDTO insertUser(UserRequestDTO us) {
 		try {			
 			User user = new User(us.getUserName(), us.getPassword(), us.getRole(), us.getEmail());
-			this.repo.save(user);
-			return true;
+			User temp = this.repo.save(user);
+			return new ResponseDTO(false , "User Added" , temp);
 		} catch (Exception e) {
 			System.out.println("ERROR : " + e.getMessage());
-			return false;
+			return ResponseDTO.errorResponse(e);
 		}
 	}
 
 	// to delete user by id
-	public boolean deleteUser(long userId){
+	public ResponseDTO deleteUser(long userId){
 		try {
 			repo.deleteById(userId);
-			return true;
+			return new ResponseDTO(false,	"User Deleted", userId);
 		} catch (Exception e) {
 			System.out.println("Exception at deleteUser = " + e.getMessage());
-			return false;
+			return ResponseDTO.errorResponse(e);
 		}
 	}
 
 	// to update the user
-	public boolean updateUser(User us, long id){
+	public ResponseDTO updateUser(Map<String,String> mp, long id){
 		try {
-			User user = this.repo.findById(id).get();
+			User user = this.repo.findById(id).orElse(null);
+			User us = User.fromMap(mp);
+			if(user == null){
+				return ResponseDTO.notFoundResponse("User not found");
+			}
+			
 			user.setUserName(us.getUserName());
 			user.setPassword(us.getPassword());
 			user.setEmail(us.getEmail());
@@ -58,10 +69,33 @@ public class UserService {
 
 			this.repo.save(user);
 			System.out.println("User updated");
-			return true;
+			return new ResponseDTO(false, "User data edited", user);
 		} catch (Exception e) {
 			System.out.println("Error at updateUser = " + e.getMessage());
-			return false;
+			return new ResponseDTO(true, "Some Error Occurred", e);
+		}
+	}
+
+	public ResponseDTO loginUser(Map<String,String> mp){
+		try {
+			String email = mp.getOrDefault("email",null);
+			String password = mp.getOrDefault("password", null);
+			if(email == null || password == null){
+				return new ResponseDTO(true,"Incomplete Credentials", new Exception());
+			}
+			User us = this.repo.findByEmail(email).get();
+			System.out.println("User u = " + us);
+			
+			// TODO
+			if(us.getPassword() == password){
+				return new ResponseDTO(false,"Login Successfull", us);
+			}else{
+				return new ResponseDTO(true,"Credentials Don't match", us);
+			}
+
+		} catch (Exception e) {
+			System.out.println("Error at loginUser = " + e.getMessage());
+			return new ResponseDTO(true,"No User Found", e);
 		}
 	}
 }
