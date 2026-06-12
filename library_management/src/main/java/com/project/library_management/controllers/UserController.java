@@ -1,7 +1,7 @@
 package com.project.library_management.controllers;
 
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,15 +10,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.project.library_management.DTOs.insert_DTOs.UserRequestDTO;
 import com.project.library_management.DTOs.response_DTOs.ResponseDTO;
-import com.project.library_management.entities.User;
 import com.project.library_management.services.UserService;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
+@CrossOrigin
 public class UserController {
 
-	@Autowired
-	UserService userService;
+	final UserService userService;
+
+	UserController(UserService userService) {
+		this.userService = userService;
+	}
 	
 	@GetMapping("/users")
 	public ResponseDTO getAllUsers(){

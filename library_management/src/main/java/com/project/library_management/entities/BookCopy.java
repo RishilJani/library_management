@@ -31,13 +31,12 @@ public class BookCopy {
         this.shelfLocation = shelfLocation;
     }
 
-
     public long getBookCopyId() {
         return bookCopyId;
     }
 
-    public void setBookCopyId(long bookCopyId) {
-        this.bookCopyId = bookCopyId;
+    public void setBookCopyId(Long bookCopyId) {
+        this.bookCopyId = bookCopyId != null ? bookCopyId : this.bookCopyId;
     }
 
     public BookStatus getStatus() {
@@ -56,15 +55,29 @@ public class BookCopy {
     }
 
     public void setStatus(BookStatus status) {
-        this.status = status;
+        this.status = status != null ? status : this.status;
     }
+    
+    public void setStatus(String status) {
+        if(status == null) return;
+
+        if (status.equals("AVAILABLE")) {
+            this.status = BookStatus.AVAILABLE;
+        } else if (status.equals("ISSUED")) {
+            this.status = BookStatus.ISSUED;
+        } else if (status.equals("LOST")) {
+            this.status = BookStatus.LOST;
+        }
+        
+    }
+
 
     public Book getBook() {
         return book;
     }   
 
     public void setBook(Book book) {
-        this.book = book;
+        this.book = book != null ? book : this.book;
     }
 
     public String getShelfLocation() {
@@ -72,8 +85,7 @@ public class BookCopy {
     }
 
     public void setShelfLocation(String shelfLocation) {
-        this.shelfLocation = shelfLocation;
+        this.shelfLocation = shelfLocation != null ? shelfLocation : this.shelfLocation;
     }
-
     
 }

@@ -1,9 +1,10 @@
 package com.project.library_management.services;
 
+import java.util.List;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.project.library_management.DTOs.insert_DTOs.BookRequestDTO;
+import com.project.library_management.DTOs.response_DTOs.BookResponsDTO;
 import com.project.library_management.DTOs.response_DTOs.ResponseDTO;
 import com.project.library_management.entities.Book;
 import com.project.library_management.repo.BookRepo;
@@ -11,12 +12,16 @@ import com.project.library_management.repo.BookRepo;
 @Service
 public class BookService {
 
-    @Autowired
-    BookRepo bookRepo;
+    final BookRepo bookRepo;
+
+    BookService(BookRepo bookRepo) {
+        this.bookRepo = bookRepo;
+    }
 
     // get all book records
     public ResponseDTO getAllBooks() {
-        return new ResponseDTO(false, "Books Data", this.bookRepo.findAll());
+        List<BookResponsDTO> res = this.bookRepo.findAll().stream().map(BookResponsDTO::new).toList();
+        return new ResponseDTO(false, "Books Data", res);
     }
 
     // get book record by id
@@ -55,11 +60,11 @@ public class BookService {
     }
 
     // to update the book record
-    public ResponseDTO updateBook(Map<String,String> mp, long id) {
+    public ResponseDTO updateBook(Map<String, String> mp, long id) {
         try {
             Book book = this.bookRepo.findById(id).orElse(null);
             Book newBook = Book.fromMap(mp);
-            if(book == null){
+            if (book == null) {
                 return ResponseDTO.notFoundResponse("Boo not found");
             }
             book.setIsbn(newBook.getIsbn());

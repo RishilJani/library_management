@@ -1,29 +1,34 @@
 package com.project.library_management.services;
 
+import java.util.List;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.project.library_management.DTOs.insert_DTOs.UserRequestDTO;
 import com.project.library_management.DTOs.response_DTOs.ResponseDTO;
+import com.project.library_management.DTOs.response_DTOs.UserResponseDTO;
 import com.project.library_management.entities.User;
 import com.project.library_management.repo.UserRepo;
 
 @Service
 public class UserService {
 	 
-    @Autowired
-	UserRepo repo;
+    final UserRepo repo;
+
+	UserService(UserRepo repo) {
+		this.repo = repo;
+	}
 
 	// To get all users 
 	public ResponseDTO getAllUsers(){
-		return new ResponseDTO(false, "Users data",repo.findAll());
+    	List<UserResponseDTO> res = repo.findAll().stream().map(UserResponseDTO::new).toList();
+		return new ResponseDTO(false, "Users data", res);
 	}
 
 	// To get user by id 	
 	public ResponseDTO getUserById(long userId) {
 		User us = repo.findById(userId).orElse(null);
 		if(us != null)
-			return new ResponseDTO(false, "User Found" , us);
+			return new ResponseDTO(false, "User Found" , new UserResponseDTO(us));
 		else
 			return ResponseDTO.notFoundResponse("User Not found");
 
@@ -84,13 +89,12 @@ public class UserService {
 				return new ResponseDTO(true,"Incomplete Credentials", new Exception());
 			}
 			User us = this.repo.findByEmail(email).get();
-			System.out.println("User u = " + us);
 			
 			// TODO
-			if(us.getPassword() == password){
-				return new ResponseDTO(false,"Login Successfull", us);
+			if(us.getPassword().equals(password)){
+				return new ResponseDTO(false,"Login Successfull", new UserResponseDTO(us));
 			}else{
-				return new ResponseDTO(true,"Credentials Don't match", us);
+				return new ResponseDTO(true,"Credentials Don't match", null);
 			}
 
 		} catch (Exception e) {

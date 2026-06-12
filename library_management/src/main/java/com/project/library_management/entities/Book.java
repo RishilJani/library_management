@@ -1,5 +1,6 @@
 package com.project.library_management.entities;
 
+import java.util.List;
 import java.util.Map;
 import jakarta.persistence.*;
 
@@ -16,7 +17,13 @@ public class Book {
     private String description;
     private String publication;
 
-
+    @OneToMany(
+        mappedBy = "book",
+        cascade = CascadeType.ALL,
+        fetch = FetchType.LAZY
+    )
+    private List<BookCopy> bookCopies;
+    
     public Book() {
         super();
     }
@@ -78,6 +85,14 @@ public class Book {
         this.publication = publication != null ? publication : this.publication;
     }
 
+    public List<BookCopy> getBookCopies() {
+        return bookCopies;
+    }
+
+    public void setBookCopies(List<BookCopy> bookCopies) {
+        this.bookCopies = bookCopies;
+    }
+    
     public static Book fromMap(Map<String, String> mp) {
         String isbn = mp.getOrDefault("isbn", null);
         String title = mp.getOrDefault("title", null);
